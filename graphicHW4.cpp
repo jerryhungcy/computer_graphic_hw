@@ -78,33 +78,33 @@ int		node_order[12][2] = { {0,1}, {1,2}, {2,3}, {3,0}, {4, 5}, {5, 6}, {6,7}, {7
 int style = 0;
 int form = 0;
 int show_global;
+int shade;
+int lit2_color = 1;
+int lit1_color = 1;
+int emssion;
 
 
-
-/*----Define material properties for cube -----*/
-float  mat_ambient[] = { 0.1, 0.3, 0.1, 1.0 };
-float  mat_diffuse[] = { 0.1, 0.9, 0.1, 1.0 };
-float  plastic_specular[] = { 0.4, 0.4, 0.4, 1.0 };
-float  metal_specular[] = { 0.9, 0.9, 0.9, 1.0 };
-
-float  mat_shininess = 64.0;
-
-float  flr_diffuse[] = { 0.60, 0.60, 0.60, 1.0 };
-float  flr_ambient[] = { 0.3, 0.3, 0.3, 1.0 };
-float  flr_specular[] = { 0.0, 0.0, 0.0, 1.0 };
 
 /*----Define light source properties -------*/
-float  lit0_position[4] = { 10.0, 10.0, 10.0, 0.0 };
+float  lit0_position[4] = { 1.0, 0.0, 0.0, 0.0 };
 float  lit1_position[4] = { 20.0, 20.0, 0.0, 1.0 };
 float  lit2_position[4];
-float  lit2_diraction[4];
+float  lit2_diraction[4]; // I'm Roger, chinese name is Jie, Luo, Nice to meet you!
 float  lit2_angle;
 
-float  lit_diffuse[4] = { 0.8, 0.4, 0.4, 1.0 };
+float  lit_diffuse[4] = { 0.4, 0.4, 0.4, 1.0 };
 float  lit_specular[4] = { 0.7, 0.7, 0.7, 1.0 };
 float  global_ambient[4] = { 0.2, 0.2, 0.2, 1.0 };
+float  lit0_diff[4] = { 0.4, 0.4, 0.4, 1.0 };
+float  lit0_spec[4] = { 0.95, 0.95, 0.95, 1.0 };
+float  lit1_diff[4] = { 0.4, 0.4, 0.4, 1.0 };
+float  lit1_spec[4] = { 0.95, 0.95, 0.95, 1.0 };
+float  lit2_diff[4] = { 0.4, 0.4, 0.4, 1.0 };
+float  lit2_spec[4] = { 0.7, 0.7, 0.7, 1.0 };
 float  lit_cutoff = 60.0;
 float  lit_exponent = 8.0;
+float  emission[4] = { 0.2, 0.2, 0.2, 1.0 };
+float  emission0[4] = { 0.0, 0.0, 0.0, 1.0 };
 
 float gold_diff[] = {0.75, 0.60, 0.22, 1.0};
 float gold_spec[] = {0.62, 0.55, 0.36, 1.0};
@@ -156,32 +156,54 @@ int distance(float npx, float npz, ob object) {
 
 void setup_light0()  //set up directional light
 {
-
 	glEnable(GL_LIGHT0);
 	glLightfv(GL_LIGHT0, GL_POSITION, lit0_position);
-	glLightfv(GL_LIGHT0, GL_DIFFUSE, lit_diffuse);
-	glLightfv(GL_LIGHT0, GL_SPECULAR, lit_specular);
+	glLightfv(GL_LIGHT0, GL_DIFFUSE, lit0_diff);
+	glLightfv(GL_LIGHT0, GL_SPECULAR, lit0_spec);
 	glLightModelfv(GL_LIGHT_MODEL_AMBIENT, global_ambient);
 	
 }
 
 void setup_light1()  //set up point light
 {
-
+	if (lit1_color == 1) {
+		lit1_diff[0] = 0.95; lit1_diff[1] = 0.05; lit1_diff[2] = 0.05;
+	}
+	else if (lit1_color == 2) {
+		lit1_diff[0] = 0.05; lit1_diff[1] = 0.95; lit1_diff[2] = 0.05;
+	}
+	else if (lit1_color == 3) {
+		lit1_diff[0] = 0.05; lit1_diff[1] = 0.05; lit1_diff[2] = 0.95;
+	}
+	else if (lit1_color == 4) {
+		lit1_diff[0] = 0.95; lit1_diff[1] = 0.95; lit1_diff[2] = 0.95;
+	}
 	glEnable(GL_LIGHT1);
 	//glLightfv(GL_LIGHT1, GL_POSITION, point_pos);
-	glLightfv(GL_LIGHT1, GL_DIFFUSE, lit_diffuse);
-	glLightfv(GL_LIGHT1, GL_SPECULAR, lit_specular);
+	glLightfv(GL_LIGHT1, GL_DIFFUSE, lit1_diff);
+	glLightfv(GL_LIGHT1, GL_SPECULAR, lit1_spec);
 	glLightModelfv(GL_LIGHT_MODEL_AMBIENT, global_ambient);
 }
 
 void setup_light2()  //set up spot light
 {
+	if (lit2_color == 1) {
+	lit2_diff[0] = 0.95; lit2_diff[1] = 0.05; lit2_diff[2] = 0.05;
+	}
+	else if (lit2_color == 2) {
+	lit2_diff[0] = 0.05; lit2_diff[1] = 0.95; lit2_diff[2] = 0.05;
+	}
+	else if (lit2_color == 3) {
+	lit2_diff[0] = 0.05; lit2_diff[1] = 0.05; lit2_diff[2] = 0.95;
+	}
+	else if (lit2_color == 4) {
+	lit2_diff[0] = 0.95; lit2_diff[1] = 0.95; lit2_diff[2] = 0.95;
+	}
 
 	glEnable(GL_LIGHT2);
 	glLightf(GL_LIGHT2, GL_SPOT_CUTOFF, lit_cutoff);
-	glLightfv(GL_LIGHT2, GL_DIFFUSE, lit_diffuse);
-	glLightfv(GL_LIGHT2, GL_SPECULAR, lit_specular);
+	glLightfv(GL_LIGHT2, GL_DIFFUSE, lit2_diff);
+	glLightfv(GL_LIGHT2, GL_SPECULAR, lit2_spec);
 	glLightf(GL_LIGHT2, GL_SPOT_EXPONENT, lit_exponent);
 }
 
@@ -264,6 +286,9 @@ void  myinit()
 	light1_on = 1;
 	light2_on = 1;
 	light0_on = 1;
+	shade = 1;
+	lit1_color = 4;
+	lit2_color = 4;
 }
 
 
@@ -289,6 +314,9 @@ void draw_sphere(float radius, int m) {
 		glMaterialfv(GL_FRONT, GL_AMBIENT, plastic_amb);
 		glMaterialfv(GL_FRONT, GL_DIFFUSE, plastic_diff);
 	}
+	if (emssion) {
+		glMaterialfv(GL_FRONT, GL_EMISSION, emission);
+	}else glMaterialfv(GL_FRONT, GL_EMISSION, emission0);
 	gluSphere(sphere, radius, 32, 32);
 }
 
@@ -314,6 +342,10 @@ void draw_cylin(float radius, float hight, int m) {
 		glMaterialfv(GL_FRONT, GL_AMBIENT, plastic_amb);
 		glMaterialfv(GL_FRONT, GL_DIFFUSE, plastic_diff);
 	}
+	if (emssion) {
+		glMaterialfv(GL_FRONT, GL_EMISSION, emission);
+	}
+	else glMaterialfv(GL_FRONT, GL_EMISSION, emission0);
 	gluCylinder(cylind, radius, radius, hight, 32, 3);
 }
 
@@ -331,7 +363,10 @@ void draw_cube_metal()
 	glMaterialfv(GL_FRONT, GL_SPECULAR, silver_spec);
 	glMaterialfv(GL_FRONT, GL_AMBIENT, silver_amb);
 	glMaterialfv(GL_FRONT, GL_DIFFUSE, silver_diff);
-
+	if (emssion) {
+		glMaterialfv(GL_FRONT, GL_EMISSION, emission);
+	}
+	else glMaterialfv(GL_FRONT, GL_EMISSION, emission0);
 	int    i;
 	for (i = 0; i < 6; i++) {
 		//glColor3fv(colors[i]);  /* Set color */
@@ -355,7 +390,9 @@ void draw_cube_plastic()
 	glMaterialfv(GL_FRONT, GL_SPECULAR, plastic_spec);
 	glMaterialfv(GL_FRONT, GL_AMBIENT, plastic_amb);
 	glMaterialfv(GL_FRONT, GL_DIFFUSE, plastic_diff);
-
+	if (emssion) {
+		glMaterialfv(GL_FRONT, GL_EMISSION, emission);
+	}else glMaterialfv(GL_FRONT, GL_EMISSION, emission0);
 	int    i;
 	for (i = 0; i < 6; i++) {
 		//glColor3fv(colors[i]);  /* Set color */
@@ -379,21 +416,14 @@ void draw_object(const ob object) {
 		draw_cube_plastic();
 	}
 	else if (object.type == 2) {
-		glColor3f(0.20, 0.1, 0.9);
-		if (sphere == NULL) {
-			sphere = gluNewQuadric();
-			gluQuadricDrawStyle(sphere, GLU_FILL);
-		}
-		gluSphere(sphere, object.size_z / 2, 12, 12);
+		draw_sphere(object.size_z / 2, PLASTIC);
+		//gluSphere(sphere, object.size_z / 2, 12, 12);
 	}
 	else if (object.type == 3) {
-		if (cylind == NULL) {
-			cylind = gluNewQuadric();
-			gluQuadricDrawStyle(cylind, GLU_FILL);
-			gluQuadricNormals(cylind, GLU_SMOOTH);
-		}
-		glColor3f(0.7, 0.4, 0.1);
-		gluCylinder(cylind, object.size_x / 2, object.size_x / 2, object.size_z / 2, 12, 3);
+		
+		//glColor3f(0.7, 0.4, 0.1);
+		draw_cylin(object.size_x / 2, object.size_z / 2, PLASTIC);
+		//gluCylinder(cylind, object.size_x / 2, object.size_x / 2, object.size_z / 2, 12, 3);
 	}
 	glPopMatrix();
 }
@@ -480,6 +510,46 @@ void make_projection(int x)
 	glMatrixMode(GL_MODELVIEW);
 }
 
+void draw_axes()
+{
+
+	/*----Draw a white sphere to represent the original-----*/
+	glColor3f(0.9, 0.9, 0.9);
+
+	gluSphere(sphere, 2.0,   /* radius=2.0 */
+		12,            /* composing of 12 slices*/
+		12);           /* composing of 8 stacks */
+
+  /*----Draw three axes in colors, yellow, meginta, and cyan--*/
+  /* Draw Z axis  */
+	glColor3f(0.0, 0.95, 0.95);
+	gluCylinder(cylind, 0.5, 0.5, /* radius of top and bottom circle */
+		10.0,              /* height of the cylinder */
+		12,               /* use 12-side polygon approximating circle*/
+		3);               /* Divide it into 3 sections */
+
+/* Draw Y axis */
+	glPushMatrix();
+	glRotatef(-90.0, 1.0, 0.0, 0.0);  /*Rotate about x by -90', z becomes y */
+	glColor3f(0.95, 0.0, 0.95);
+	gluCylinder(cylind, 0.5, 0.5, /* radius of top and bottom circle */
+		10.0,             /* height of the cylinder */
+		12,               /* use 12-side polygon approximating circle*/
+		3);               /* Divide it into 3 sections */
+	glPopMatrix();
+
+	/* Draw X axis */
+	glColor3f(0.95, 0.95, 0.0);
+	glPushMatrix();
+	glRotatef(90.0, 0.0, 1.0, 0.0);  /*Rotate about y  by 90', x becomes z */
+	gluCylinder(cylind, 0.5, 0.5,   /* radius of top and bottom circle */
+		10.0,             /* height of the cylinder */
+		12,               /* use 12-side polygon approximating circle*/
+		3);               /* Divide it into 3 sections */
+	glPopMatrix();
+	/*-- Restore the original modelview matrix --*/
+	glPopMatrix();
+}
 
 /*---------------------------------------------------------
  * Procedure to draw view volume, eye position, focus ,...
@@ -599,51 +669,55 @@ void display()
 		glViewport(width / 2, 0, width / 2, height / 2);
 		draw_scene();
 
-		make_view(1);
+		
 		make_projection(1);
 		glViewport(0, height / 2, width / 2, height / 2);
-		//draw light
 		draw_scene();
+		make_view(1);
 		draw_view();
 
-		make_view(2);
+		
 		glViewport(width / 2, height / 2, width / 2, height / 2);
 		draw_scene();
+		make_view(2);
 		draw_view();
 
-		make_view(3);
+		
 		glViewport(0, 0, width / 2, height / 2);
 		draw_scene();
+		make_view(3);
 		draw_view();
 		break;
 	case 1:
-		make_view(1);
+		
 		make_projection(1);
 		glViewport(0, 0, width, height);
 		draw_scene();
+		make_view(1);
 		draw_view();
 		break;
 	case 2:
-		make_view(2);
+		
 		make_projection(2);
 		glViewport(0, 0, width, height);
 		draw_scene();
-		
+		make_view(2);
 		draw_view();
 		break;
 	case 3:
-		make_view(3);
+		
 		make_projection(3);
 		glViewport(0, 0, width, height);
 		draw_scene();
+		make_view(3);
 		draw_view();
 		break;
 	case 4:
 		make_view(4);
 		make_projection(4);
 		glViewport(0, 0, width, height);
-		draw_scene(); 
-		draw_view();
+		draw_scene();
+		
 		break;
 	}
 	/*-------Swap the back buffer to the front --------*/
@@ -661,11 +735,13 @@ void draw_scene()
 
 	draw_floor();
 
-	/*for (int i = 0; i < number_object; i++) {
+	for (int i = 0; i < number_object; i++) {
 		draw_object(objectList[i]);
-	}*/
+	}
 	
-	/* draw spot light*/
+	if (show_global) {
+		draw_axes();
+	}
 
 	/* draw robot */
 	glTranslatef(px, py, pz);
@@ -994,21 +1070,21 @@ void my_quit(unsigned char key, int ix, int iy)
 
 		/*------transform the EYE coordinate system ------*/
 	}
-	else if (key == 'e') {
+	else if (key == 'E') {
 		eyeDy += 0.5;       /* move up */
 		for (i = 0; i < 3; i++) eye[i] -= 0.5*u[1][i];
 		//fprintf(stderr, "eye[0] = %f eye[1] = %f eye[2] = %f \n", eye[0], eye[1], eye[2]);
 		
 	}
-	else if (key == 'E') {
+	else if (key == 'e') {
 		eyeDy += -0.5;       /* move down */
 		for (i = 0; i < 3; i++) eye[i] += 0.5*u[1][i];
 	}
-	else if (key == 'a') {
+	else if (key == 'd') {
 		eyeDx += -0.5;       /* move left */
 		for (i = 0; i < 3; i++) eye[i] += 0.5*u[0][i];
 	}
-	else if (key == 'd') {
+	else if (key == 'a') {
 		eyeDx += 0.5;        /* move right */
 		for (i = 0; i < 3; i++) eye[i] -= 0.5*u[0][i];
 	}
@@ -1135,6 +1211,62 @@ void my_quit(unsigned char key, int ix, int iy)
 	else if(key == 'P'|| key == 'p'){
 		printusermaue();
 	}
+	else if (key == '1') light0_on = !light0_on;
+	else if (key == '2') light1_on = !light1_on;
+	else if (key == '3') light2_on = !light2_on;
+	/*---Rotate light position by SPACE key ----*/
+	else if (key == 'm') { 
+		lit2_angle += 5.0;
+		if (lit2_angle > 360) lit2_angle = 0;
+	}
+	else if (key == 'M') {
+		lit2_angle += 5.0;
+		if (lit2_angle > 360) lit2_angle = 0;
+	}
+	else if (key == '4') {
+		lit1_color++;
+		if (lit1_color > 4)lit1_color = 1;
+	}
+	else if (key == '5') {
+		lit2_color++;
+		if (lit2_color > 4)lit2_color = 1;
+	}
+	else if (key == 'b') {
+		lit_cutoff += 5;
+		if (lit_cutoff > 90)lit_cutoff = 90.0;
+	}
+	else if (key == 'B') {
+		lit_cutoff -= 5;
+		if (lit_cutoff < 10 )lit_cutoff = 10.0;
+	}
+	else if (key == 'n') {
+		lit_exponent += 5;
+		if (lit_exponent > 120)lit_exponent = 120.0;
+	}
+	else if (key == 'N') {
+		lit_exponent -= 5;
+		if (lit_exponent < 10)lit_exponent = 10.0;
+	}
+	else if(key == '6') {
+		emssion = !emssion;
+		//fprintf(stderr, "emssion = %d \n", emssion);
+	}
+	else if (key == '8') {
+		float temp;
+		temp = lit0_position[0];
+		lit0_position[0] = lit0_position[1];
+		lit0_position[1] = lit0_position[2];
+		lit0_position[2] = temp;
+		/*fprintf(stderr, "lit0_position[0] = %f lit0_position[1]= %f lit0_position[2] = %f lit0_position[3] = %f \n",
+		lit0_position[0], lit0_position[1], lit0_position[2], lit0_position[3]);*/
+	}
+	else if (key == '9') {
+		if (shade) {
+			glShadeModel(GL_SMOOTH);
+		}else glShadeModel(GL_FLAT);
+		shade = !shade;
+	}
+
 	/*
 	for(int i =0;i<3;i++)
 		fprintf(stderr, "u[%d][%d] = %f u[%d][%d] = %f u[%d][%d] = %f \n", i, 0,  u[i][0], i,1, u[i][1], i,2, u[i][2]);
