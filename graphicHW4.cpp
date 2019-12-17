@@ -95,9 +95,10 @@ float  flr_specular[] = { 0.0, 0.0, 0.0, 1.0 };
 
 /*----Define light source properties -------*/
 float  lit0_position[4] = { 10.0, 10.0, 10.0, 0.0 };
-float  lit1_position[4] = { 10.0, 14.0, 0.0, 1.0 };
+float  lit1_position[4] = { 20.0, 20.0, 0.0, 1.0 };
 float  lit2_position[4];
-float  lit2_direction[4];
+float  lit2_diraction[4];
+float  lit2_angle;
 
 float  lit_diffuse[4] = { 0.8, 0.4, 0.4, 1.0 };
 float  lit_specular[4] = { 0.7, 0.7, 0.7, 1.0 };
@@ -120,7 +121,7 @@ float silver_spec[] = {0.5, 0.5, 0.5, 1.0 };
 float silver_amb[] = { 0.2, 0.2, 0.2, 1.0 };
 float silver_shine = 0.4;
 
-
+int light0_on, light1_on, light2_on;
 
 typedef struct objects {
 	int type;
@@ -161,6 +162,7 @@ void setup_light0()  //set up directional light
 	glLightfv(GL_LIGHT0, GL_DIFFUSE, lit_diffuse);
 	glLightfv(GL_LIGHT0, GL_SPECULAR, lit_specular);
 	glLightModelfv(GL_LIGHT_MODEL_AMBIENT, global_ambient);
+	
 }
 
 void setup_light1()  //set up point light
@@ -258,6 +260,10 @@ void  myinit()
 	timer = 0;
 	show_global = 0;
 	style = 4;
+	lit2_angle = 90.0;
+	light1_on = 1;
+	light2_on = 1;
+	light0_on = 1;
 }
 
 
@@ -321,11 +327,10 @@ void draw_cube_metal()
 	float  white[] = { 0.95, 0.95, 0.95, 1.0 };
 
 	glEnable(GL_COLOR_MATERIAL);
-	glColorMaterial(GL_FRONT, GL_SPECULAR);
-	glColor3fv(white);
-	glMaterialf(GL_FRONT, GL_SHININESS, 6.0);
-	glColorMaterial(GL_FRONT, GL_AMBIENT_AND_DIFFUSE);
-	glColor3fv(cube_color);
+	glMaterialf(GL_FRONT, GL_SHININESS, silver_shine * 128);
+	glMaterialfv(GL_FRONT, GL_SPECULAR, silver_spec);
+	glMaterialfv(GL_FRONT, GL_AMBIENT, silver_amb);
+	glMaterialfv(GL_FRONT, GL_DIFFUSE, silver_diff);
 
 	int    i;
 	for (i = 0; i < 6; i++) {
@@ -346,11 +351,10 @@ void draw_cube_plastic()
 	float  specular[] = { 0.3, 0.3, 0.3, 1.0 };
 
 	glEnable(GL_COLOR_MATERIAL);
-	glColorMaterial(GL_FRONT, GL_SPECULAR);
-	glColor3fv(specular);
-	glMaterialf(GL_FRONT, GL_SHININESS, 6.0);
-	glColorMaterial(GL_FRONT, GL_AMBIENT_AND_DIFFUSE);
-	glColor3fv(cube_color);
+	glMaterialf(GL_FRONT, GL_SHININESS, plastic_shine * 128);
+	glMaterialfv(GL_FRONT, GL_SPECULAR, plastic_spec);
+	glMaterialfv(GL_FRONT, GL_AMBIENT, plastic_amb);
+	glMaterialfv(GL_FRONT, GL_DIFFUSE, plastic_diff);
 
 	int    i;
 	for (i = 0; i < 6; i++) {
@@ -535,7 +539,49 @@ void draw_view()
 }
 
 void draw_light(){
+	if (light1_on) {
+		
+		glPushMatrix();
+		glTranslatef(lit1_position[0], lit1_position[1], lit1_position[2]);
+		glDisable(GL_LIGHTING);
+		glDisable(GL_CULL_FACE);
+		glColor3f(0.80, 0.80, 0.0);
+		glutSolidSphere(0.3, 12, 12);
+		glPopMatrix();
+		glEnable(GL_CULL_FACE);
+		glEnable(GL_LIGHTING);
+		setup_light1();
+		glLightfv(GL_LIGHT1, GL_POSITION, lit1_position);
+	}else glDisable(GL_LIGHT1);
 	
+	if (light0_on) {
+		setup_light0();
+	}else glDisable(GL_LIGHT0);
+
+	if (light2_on) {
+		lit2_position[0] = px;
+		lit2_position[1] = py;
+		lit2_position[2] = pz;
+		lit2_position[3] = 1.0;
+		lit2_diraction[0] = -cos(lit2_angle * PI / 180.0);
+		lit2_diraction[1] = -1.0;
+		lit2_diraction[2] = -sin(lit2_angle * PI / 180.0);
+
+		lit2_position[1] += 20;
+		lit2_position[0] += 10 * cos(lit2_angle * PI / 180.0);
+		lit2_position[2] += 10 * sin(lit2_angle * PI / 180.0);
+		glPushMatrix();
+		glTranslatef(lit2_position[0], lit2_position[1], lit2_position[2]);
+		glColor3f(1.0, 0.0, 0.0);
+		glutWireSphere(0.5, 8, 8);
+		glPopMatrix();
+		setup_light2();
+		glLightfv(GL_LIGHT2, GL_POSITION, lit2_position);
+		glLightfv(GL_LIGHT2, GL_SPOT_DIRECTION, lit2_diraction);
+	}else glDisable(GL_LIGHT2);
+	
+	
+
 }
 
 
@@ -615,9 +661,9 @@ void draw_scene()
 
 	draw_floor();
 
-	for (int i = 0; i < number_object; i++) {
+	/*for (int i = 0; i < number_object; i++) {
 		draw_object(objectList[i]);
-	}
+	}*/
 	
 	/* draw spot light*/
 
