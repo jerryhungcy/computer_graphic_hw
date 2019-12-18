@@ -110,16 +110,19 @@ float gold_diff[] = {0.75, 0.60, 0.22, 1.0};
 float gold_spec[] = {0.62, 0.55, 0.36, 1.0};
 float gold_amb[] = { 0.24, 0.2, 0.07, 1.0 };
 float gold_shine = 0.4;
+float gold_color[] = { 1.0, 1.0, 0.0, 1.0};
 
 float plastic_diff[] = {0.55, 0.55, 0.55, 1.0 };
 float plastic_spec[] = {0.7, 0.7, 0.7, 1.0 };
 float plastic_amb[] = { 0.0, 0.0, 0.0, 1.0 };
 float plastic_shine = 0.25;
+float plastic_color[] = { 1.0, 0.0, 0.0, 1.0 };
 
 float silver_diff[] = {0.5, 0.5, 0.5, 1.0 };
 float silver_spec[] = {0.5, 0.5, 0.5, 1.0 };
 float silver_amb[] = { 0.2, 0.2, 0.2, 1.0 };
 float silver_shine = 0.4;
+float silver_color[] = { 1.0, 1.0, 1.0, 1.0 };
 
 int light0_on, light1_on, light2_on;
 
@@ -299,6 +302,7 @@ void draw_sphere(float radius, int m) {
 		glMaterialfv(GL_FRONT, GL_SPECULAR, gold_spec);
 		glMaterialfv(GL_FRONT, GL_AMBIENT, gold_amb);
 		glMaterialfv(GL_FRONT, GL_DIFFUSE, gold_diff);
+		glColor3fv(gold_color);
 	}
 	else if (m == SILVER) {
 		glEnable(GL_COLOR_MATERIAL);
@@ -306,6 +310,7 @@ void draw_sphere(float radius, int m) {
 		glMaterialfv(GL_FRONT, GL_SPECULAR, silver_spec);
 		glMaterialfv(GL_FRONT, GL_AMBIENT, silver_amb);
 		glMaterialfv(GL_FRONT, GL_DIFFUSE, silver_diff);
+		glColor3fv(silver_color);
 	}
 	else if (m == PLASTIC) {
 		glEnable(GL_COLOR_MATERIAL);
@@ -313,11 +318,13 @@ void draw_sphere(float radius, int m) {
 		glMaterialfv(GL_FRONT, GL_SPECULAR, plastic_spec);
 		glMaterialfv(GL_FRONT, GL_AMBIENT, plastic_amb);
 		glMaterialfv(GL_FRONT, GL_DIFFUSE, plastic_diff);
+		glColor3fv(plastic_color);
 	}
 	if (emssion) {
 		glMaterialfv(GL_FRONT, GL_EMISSION, emission);
 	}else glMaterialfv(GL_FRONT, GL_EMISSION, emission0);
 	gluSphere(sphere, radius, 32, 32);
+	glDisable(GL_COLOR_MATERIAL);
 }
 
 void draw_cylin(float radius, float hight, int m) {
@@ -327,6 +334,7 @@ void draw_cylin(float radius, float hight, int m) {
 		glMaterialfv(GL_FRONT, GL_SPECULAR, gold_spec);
 		glMaterialfv(GL_FRONT, GL_AMBIENT, gold_amb);
 		glMaterialfv(GL_FRONT, GL_DIFFUSE, gold_diff);
+		glColor3fv(gold_color);
 	}
 	else if (m == SILVER) {
 		glEnable(GL_COLOR_MATERIAL);
@@ -334,6 +342,7 @@ void draw_cylin(float radius, float hight, int m) {
 		glMaterialfv(GL_FRONT, GL_SPECULAR, silver_spec);
 		glMaterialfv(GL_FRONT, GL_AMBIENT, silver_amb);
 		glMaterialfv(GL_FRONT, GL_DIFFUSE, silver_diff);
+		glColor3fv(silver_color);
 	}
 	else if (m == PLASTIC) {
 		glEnable(GL_COLOR_MATERIAL);
@@ -341,12 +350,14 @@ void draw_cylin(float radius, float hight, int m) {
 		glMaterialfv(GL_FRONT, GL_SPECULAR, plastic_spec);
 		glMaterialfv(GL_FRONT, GL_AMBIENT, plastic_amb);
 		glMaterialfv(GL_FRONT, GL_DIFFUSE, plastic_diff);
+		glColor3fv(plastic_color);
 	}
 	if (emssion) {
 		glMaterialfv(GL_FRONT, GL_EMISSION, emission);
 	}
 	else glMaterialfv(GL_FRONT, GL_EMISSION, emission0);
 	gluCylinder(cylind, radius, radius, hight, 32, 3);
+	glDisable(GL_COLOR_MATERIAL);
 }
 
 /*--------------------------------------------------------
@@ -368,6 +379,7 @@ void draw_cube_metal()
 	}
 	else glMaterialfv(GL_FRONT, GL_EMISSION, emission0);
 	int    i;
+	glColor3fv(gold_color);
 	for (i = 0; i < 6; i++) {
 		//glColor3fv(colors[i]);  /* Set color */
 		glNormal3fv(normal[i]);
@@ -378,6 +390,7 @@ void draw_cube_metal()
 		glVertex3fv(points[face[i][3]]);
 		glEnd();
 	}
+	glDisable(GL_COLOR_MATERIAL);
 }
 
 void draw_cube_plastic()
@@ -393,6 +406,7 @@ void draw_cube_plastic()
 	if (emssion) {
 		glMaterialfv(GL_FRONT, GL_EMISSION, emission);
 	}else glMaterialfv(GL_FRONT, GL_EMISSION, emission0);
+	glColor3fv(plastic_color);
 	int    i;
 	for (i = 0; i < 6; i++) {
 		//glColor3fv(colors[i]);  /* Set color */
@@ -404,6 +418,7 @@ void draw_cube_plastic()
 		glVertex3fv(points[face[i][3]]);
 		glEnd();
 	}
+	glDisable(GL_COLOR_MATERIAL);
 }
 
 void draw_object(const ob object) {
@@ -669,20 +684,20 @@ void display()
 		glViewport(width / 2, 0, width / 2, height / 2);
 		draw_scene();
 
-		
+		make_view(1);
 		make_projection(1);
 		glViewport(0, height / 2, width / 2, height / 2);
 		draw_scene();
 		make_view(1);
 		draw_view();
 
-		
+		make_view(2);
 		glViewport(width / 2, height / 2, width / 2, height / 2);
 		draw_scene();
 		make_view(2);
 		draw_view();
 
-		
+		make_view(3);
 		glViewport(0, 0, width / 2, height / 2);
 		draw_scene();
 		make_view(3);
